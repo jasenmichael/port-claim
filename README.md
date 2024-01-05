@@ -80,25 +80,30 @@ You can use `port-claim` as a global package.
 Install the package globally:
 
 ```sh
-$ npm install -g port-claim
+npm install -g port-claim
 # OR with yarn
-$ yarn global add port-claim
+yarn global add port-claim
 # OR with pnpm
-$ pnpm add -g port-claim
+pnpm add -g port-claim
 ```
 
 Then:
 
 ```sh
 # Claim a port
-$ port-claim 3000
+port-claim 3000
 ```
 
 You can also use [npx](https://nodejs.dev/learn/the-npx-nodejs-package-runner) to `port-claim` without installing:
 
 ```sh
 # Claim a port
-$ npx port-claim 3000
+npx port-claim 3000
+```
+
+CLI Usage
+```sh
+npx port-claim 3000 -h
 ```
 
 ## Example
