@@ -13,10 +13,7 @@
   <a href="https://github.com/feross/standard">
     <img src="https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square" alt="Standard" />
   </a>
-  <a href="https://travis-ci.org/tiaanduplessis/port-claim">
-    <img src="https://img.shields.io/travis/tiaanduplessis/port-claim.svg?style=flat-square" alt="Travis Build" />
-  </a>
-  <a href="https://github.com/tiaanduplessis/port-claim/blob/master/LICENSE">
+  <a href="https://github.com/jasenmichael/port-claim/blob/main/LICENSE">
     <img src="https://img.shields.io/npm/l/port-claim.svg?style=flat-square" alt="License" />
   </a>
   <a href="http://makeapullrequest.com">
