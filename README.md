@@ -59,12 +59,12 @@ pnpm add port-claim
 
 ## API
 
-**claimPort(portNumber: number): Promise<void>**
+**portClaim(portNumber: number): Promise<void>**
 
 - Takes a port number as input.
 - Checks if the port is in use (with [detect-port](https://www.npmjs.com/package/detect-port)).
 - If the port is already in use, kills the process using it (with [kill-port](https://www.npmjs.com/package/kill-port)).
-- Returns a promise that resolves when the port is successfully claimed, or rejects with an error if the process fails.
+- Returns a promise that resolves when the port is successfully claimed, or rejects with an error if no port was passed, or the process fails.
 
 
 ## CLI
