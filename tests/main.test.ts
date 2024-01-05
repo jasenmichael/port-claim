@@ -18,31 +18,31 @@ describe("Check port availability and killing processes", () => {
   });
 
   it("should show usage", () => {
-    const command = "./dist/cli.cjs -h";
+    const command = "./src/cli.cjs -h";
     const stdout = execSync(command).toString();
     expect(stdout).toContain("Usage: port-claim <port> [--verbose]");
   });
 
   it("should return error if no port is passed", () => {
-    const command = "./dist/cli.cjs";
+    const command = "./src/cli.cjs";
     const stdout = execSync(command).toString();
     expect(stdout).toContain("Error: Missing port argument");
   });
 
   it("should report an available port", () => {
-    const command = "./dist/cli.cjs 3156 -v";
+    const command = "./src/cli.cjs 3156 -v";
     const stdout = execSync(command).toString();
     expect(stdout).toContain(`Port 3156 is available`);
   });
 
   it("should report a taken port, and kill the process", () => {
-    const command = "./dist/cli.cjs " + port.toString() + " -v";
+    const command = "./src/cli.cjs " + port.toString() + " -v";
     const stdout = execSync(command).toString();
     expect(stdout).toContain(`Port ${port} is taken`);
   });
 
   it("should confirm the process is killed by reporting the port as available again", () => {
-    const command = "./dist/cli.cjs " + port.toString() + " -v";
+    const command = "./src/cli.cjs " + port.toString() + " -v";
     const stdout = execSync(command).toString();
     expect(stdout).toContain(`Port ${port} is available`);
   });

@@ -1,4 +1,4 @@
-const http = require("http");
+const http = require("node:http");
 
 const port = process.argv[2]; // Port passed as argument from test
 

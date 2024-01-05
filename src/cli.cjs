@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import portClaim from "./index";
+const portClaim = require("../dist/index.cjs");
 
 function showUsage() {
   console.log(`Usage: port-claim <port> [--verbose]`);
@@ -25,7 +25,7 @@ if (process.argv.includes("-h") || process.argv.includes("--help")) {
 }
 
 try {
-  portClaim(Number(port), verbose);
+  portClaim(port, verbose);
 } catch (error) {
   console.error(error);
   process.exit(1);
