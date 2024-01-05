@@ -1,9 +1,6 @@
-<div align="center">
-  <img src="./logo.png" alt="Logo" width="500px">
-</div>
 <h1 align="center">port-claim</h1>
 <div align="center">
-  <strong>Kill process running on given port</strong>
+  <strong>If a port is in use, port-claim stops the process using it.</strong>
 </div>
 <br>
 <div align="center">
