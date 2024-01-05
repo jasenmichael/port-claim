@@ -28,9 +28,6 @@ devDependencies:
   eslint-config-unjs:
     specifier: ^0.2.1
     version: 0.2.1(eslint@8.56.0)(typescript@5.3.3)
-  jiti:
-    specifier: ^1.21.0
-    version: 1.21.0
   prettier:
     specifier: ^3.1.1
     version: 3.1.1
