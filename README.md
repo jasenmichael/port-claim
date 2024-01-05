@@ -53,7 +53,13 @@ pnpm add port-claim
 ## Usage
 
 ```js
+import portClaim from "port-claim"
+// or 
+const portClaim = require("port-claim")
 
+portClaim(3000)
+// or
+portClaim(3000, "-v")
 
 ```
 
