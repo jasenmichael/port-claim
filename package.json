@@ -1,0 +1,60 @@
+{
+  "name": "port-claim",
+  "version": "1.0.0",
+  "description": "If a port is in use, port-claim stops the process using it.",
+  "repository": "https://github.com/jasenmichael/port-claim",
+  "issues": "https://github.com/jasenmichael/port-claim/issues",
+  "homepage": "https://github.com/jasenmichael/port-claim#readme",
+  "keywords": [
+    "port",
+    "port-availability",
+    "process",
+    "port-conflict",
+    "kill-port",
+    "kill-port-process",
+    "detect-port",
+    "ensure-port-open",
+    "ensure-port-available",
+    "claim-port",
+    "port-claim"
+  ],
+  "author": "@jasenmichael",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.cjs",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "files": [
+    "dist"
+  ],
+  "bin": {
+    "port-claim": "./dist/index.cjs"
+  },
+  "scripts": {
+    "build": "tsc && vite build && chmod +x ./dist/cli.cjs",
+    "dev": "vite",
+    "release": "pnpm lint && pnpm test && pnpm build && changelogen --release && pnpm publish && git push --follow-tags",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:watch": "vitest watch",
+    "watch": "tsc && vite build --watch"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.6",
+    "changelogen": "^0.5.5",
+    "eslint": "^8.56.0",
+    "eslint-config-unjs": "^0.2.1",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.8",
+    "vitest": "^1.1.2"
+  },
+  "dependencies": {
+    "detect-port": "^1.5.1",
+    "glob": "^10.3.10",
+    "kill-port": "^2.0.1"
+  }
+}
