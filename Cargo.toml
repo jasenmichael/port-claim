@@ -1,0 +1,20 @@
+[package]
+name = "port-claim"
+version = "1.7.29"
+edition = "2021"
+authors = ["Port-Claim Developer"]
+description = "A tool to check if ports are in use and kill processes using them"
+license = "MIT"
+repository = "https://github.com/jasenmichael/port-claim"
+
+[dependencies]
+clap = { version = "4.4", default-features = false, features = ["std", "help", "usage"] }
+socket2 = "0.5.5"
+libc = "0.2.151"
+
+[profile.release]
+opt-level = "z"      # Optimize for size
+lto = true           # Enable Link Time Optimization
+codegen-units = 1    # Reduce parallel code generation units
+strip = true         # Strip symbols
+panic = "abort"      # Removes panic unwinding code
