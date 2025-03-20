@@ -1,0 +1,138 @@
+name: Build and Upload Binaries
+
+on:
+  release:
+    types: [created]
+  # push:
+  #   tags:
+  #     - 'v*'  # Run when any tag starting with 'v' is pushed
+  # push:
+  #   branches: [main]
+  workflow_dispatch:
+
+jobs:
+  ci:
+    uses: ./.github/workflows/ci.yml
+
+  build-and-upload:
+    name: Build for ${{ matrix.os }} / ${{ matrix.target }}
+    needs: ci
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          # Linux builds (64-bit) - using musl for static linking
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-musl
+            asset_name: port-claim-linux-x64.tar.gz
+          - os: ubuntu-latest
+            target: aarch64-unknown-linux-musl
+            asset_name: port-claim-linux-arm64.tar.gz
+          # Linux builds (32-bit) - using musl for static linking 
+          - os: ubuntu-latest
+            target: i686-unknown-linux-musl
+            asset_name: port-claim-linux-x86.tar.gz
+          # macOS builds  
+          - os: macos-latest
+            target: x86_64-apple-darwin
+            asset_name: port-claim-mac-x64.tar.gz
+          - os: macos-latest
+            target: aarch64-apple-darwin
+            asset_name: port-claim-mac-arm64.tar.gz
+          # Windows builds (64-bit)
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            asset_name: port-claim-windows-x64.tar.gz
+          # Windows builds (32-bit)
+          - os: windows-latest
+            target: i686-pc-windows-msvc
+            asset_name: port-claim-windows-x86.tar.gz
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: ${{ matrix.target }}
+          override: true
+
+      - name: Install musl tools (Linux)
+        if: contains(matrix.target, 'musl')
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y musl-tools
+
+      - name: Setup cross-compilation for ARM64 Linux
+        if: matrix.target == 'aarch64-unknown-linux-musl'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-aarch64-linux-gnu
+
+      - name: Build binary
+        uses: actions-rs/cargo@v1
+        with:
+          use-cross: ${{ contains(matrix.target, 'aarch64-unknown-linux') }}
+          command: build
+          args: --release --target ${{ matrix.target }}
+
+      - name: Prepare archive
+        shell: bash
+        run: |
+          # Define binary name with extension if Windows
+          if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
+            BIN_NAME="port-claim.exe"
+          else
+            BIN_NAME="port-claim"
+          fi
+          
+          # Create directory for the archive with a nested directory structure
+          # binary-install uses strip:1 when extracting, so we need to create a directory structure
+          mkdir -p release-archive/port-claim
+          
+          # Copy binary to the nested directory
+          if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
+            cp target/${{ matrix.target }}/release/$BIN_NAME release-archive/port-claim/
+          else
+            cp target/${{ matrix.target }}/release/$BIN_NAME release-archive/port-claim/
+            chmod +x release-archive/port-claim/$BIN_NAME
+          fi
+          
+          # Create tar.gz archive - now with the nested directory structure
+          cd release-archive
+          tar czf ../${{ matrix.asset_name }} port-claim
+          cd ..
+
+      # Use different upload steps depending on trigger type
+      - name: Check if triggered by release
+        id: check_release
+        run: echo "is_release=${{ github.event_name == 'release' }}" >> $GITHUB_OUTPUT
+
+      # Upload to the current release if triggered by a release event
+      - name: Upload binary to current release
+        if: steps.check_release.outputs.is_release == 'true'
+        uses: softprops/action-gh-release@v1
+        with:
+          files: ${{ matrix.asset_name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+      # Get latest release and upload to it if triggered by push or manual dispatch
+      - name: Get latest release
+        if: steps.check_release.outputs.is_release != 'true'
+        id: latest_release
+        uses: cardinalby/git-get-release-action@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          latest: true
+          
+      - name: Upload binary to latest release
+        if: steps.check_release.outputs.is_release != 'true'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.latest_release.outputs.tag_name }}
+          files: ${{ matrix.asset_name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
