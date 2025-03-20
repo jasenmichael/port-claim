@@ -22,103 +22,114 @@
 </div>
 <br>
 
+## Installation
 
-## Table of Contents
-- [Table of Contents](#table-of-contents)
-- [Install](#install)
-- [Usage](#usage)
-- [API](#api)
-- [CLI](#cli)
-- [Contributing](#contributing)
-- [License](#license)
-
-## Install
-
-
-With `npm`:
-```sh
-npm install --save port-claim
-```
-
-With `yarn`:
-```sh
-yarn add port-claim
-```
-
-With `pnpm`:
-```sh
-pnpm add port-claim
+```bash
+cargo install --path .
 ```
 
 ## Usage
 
-```js
-import portClaim from "port-claim"
-// or 
-const portClaim = require("port-claim")
-
-portClaim(3000)
-// or
-portClaim(3000, "-v")
-
+```
+port-claim -h | --help | -V | --version
+port-claim <port> [<additional-ports>] [-v | --verbose]
 ```
 
-## API
+### Options
 
-**portClaim(portNumber: number): Promise<void>**
+- `-h, --help`: Prints usage information
+- `-V, --version`: Prints the version
+- `-v, --verbose`: Prints verbose information about port status and process killing
 
-- Takes a port number as input.
-- Checks if the port is in use (with [detect-port](https://www.npmjs.com/package/detect-port)).
-- If the port is already in use, kills the process using it (with [kill-port](https://www.npmjs.com/package/kill-port)).
-- Returns a promise that resolves when the port is successfully claimed, or rejects with an error if no port was passed, or the process fails.
+### Arguments
 
+- `<port>`: Required argument specifying the port to check and kill if in use
+- `[<additional-ports>]`: Optional additional ports to check and kill
 
-## CLI
+## Examples
 
-You can use `port-claim` as a global package.
+```bash
+# Check if port 8080 is in use and kill the process if it is
+port-claim 8080
 
-Install the package globally:
+# Check multiple ports with verbose output
+port-claim 3000 8080 9000 --verbose
 
-```sh
-npm install -g port-claim
-# OR with yarn
-yarn global add port-claim
-# OR with pnpm
-pnpm add -g port-claim
+# Display help information
+port-claim --help
+
+# Display version information
+port-claim --version
 ```
 
-Then:
+## How It Works
 
-```sh
-# Claim a port
-port-claim 3000
+1. When you specify one or more ports, the tool checks if each port is available.
+2. If a port is in use, the tool attempts to kill the process using that port.
+3. With the `--verbose` flag, the tool will print information about each step of the process.
+
+## Platform Support
+
+The tool works on both Unix-based systems (Linux, macOS) and Windows, using different system commands to identify and kill processes on each platform. 
+
+## Development
+
+### Setup
+
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/port-claim.git
+cd port-claim
+
+# Install Rust (if not already installed)
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
+# Install development tools
+rustup component add clippy rustfmt
 ```
 
-You can also use [npx](https://nodejs.dev/learn/the-npx-nodejs-package-runner) to `port-claim` without installing:
+### Building
 
-```sh
-# Claim a port
-npx port-claim 3000
+```bash
+# Debug build
+cargo build
+
+# Release build
+cargo build --release
 ```
 
-CLI Usage
-```sh
-npx port-claim 3000 -h
+### Testing
+
+```bash
+# Run all tests
+cargo test
+
+# Run tests with verbose output
+cargo test --verbose -- --nocapture
 ```
 
-## Example
-example usage in a package.json pre script
-```json file="package.json"
-  "scripts": {
-    "predev": "port-claim 3000",
-    "dev": "nuxt dev"
-  },
+### Code Quality
+
+```bash
+# Format code
+cargo fmt
+
+# Check code formatting (without making changes)
+cargo fmt -- --check
+
+# Run clippy linter
+cargo clippy
+
+# Run clippy with strict warnings
+cargo clippy -- -D warnings
 ```
 
-## Contributing
+### Running Locally
 
-Got an idea for a new feature? Found a bug? Contributions are welcome! Please [open up an issue](https://github.com/jasenmichael/port-claim/issues) or [make a pull request](https://github.com/jasenmichael/claim-port/pulls).
+```bash
+# Run directly without installing
+cargo run -- 8080
 
-## License
-
-[MIT © @jasenmichael](./LICENSE)
+# Run with verbose flag
+cargo run -- 8080 --verbose
+```
