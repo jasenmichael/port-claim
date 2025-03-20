@@ -24,9 +24,56 @@
 
 ## Installation
 
+### Via npm or pnpm (global)
+
 ```bash
+# Using npm
+npm install -g port-claim
+
+# Using pnpm
+pnpm add -g port-claim
+```
+
+### In a project (package.json)
+
+```bash
+# Using npm
+npm install port-claim --save-dev
+
+# Using pnpm
+pnpm add -D port-claim
+```
+
+Then add to your package.json scripts:
+
+```js
+"scripts": {
+  "predev": "port-claim 3000",
+  "dev": "nuxt dev"
+  // "dev": "port-claim 3000 && nuxt dev"
+}
+```
+
+### Via Cargo (Rust)
+
+```bash
+# Install directly from crates.io
+cargo install port-claim
+
+# Or install from source
+git clone https://github.com/jasenmichael/port-claim.git
+cd port-claim
 cargo install --path .
 ```
+
+### Binary Installation
+
+You can download pre-compiled binaries from the [GitHub Releases page](https://github.com/jasenmichael/port-claim/releases).
+
+Available for:
+- Linux (x64, arm64, x86)
+- macOS (x64, arm64)
+- Windows (x64, x86)
 
 ## Usage
 
@@ -74,62 +121,23 @@ The tool works on both Unix-based systems (Linux, macOS) and Windows, using diff
 
 ## Development
 
-### Setup
-
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/port-claim.git
+git clone https://github.com/jasenmichael/port-claim.git
 cd port-claim
 
-# Install Rust (if not already installed)
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+# Install dependencies (for the npm wrapper)
+npm install
 
-# Install development tools
-rustup component add clippy rustfmt
-```
-
-### Building
-
-```bash
-# Debug build
-cargo build
-
-# Release build
+# Build the Rust binary
 cargo build --release
-```
 
-### Testing
-
-```bash
-# Run all tests
+# Run tests
 cargo test
 
-# Run tests with verbose output
-cargo test --verbose -- --nocapture
-```
-
-### Code Quality
-
-```bash
 # Format code
 cargo fmt
 
-# Check code formatting (without making changes)
-cargo fmt -- --check
-
-# Run clippy linter
+# Lint code
 cargo clippy
-
-# Run clippy with strict warnings
-cargo clippy -- -D warnings
-```
-
-### Running Locally
-
-```bash
-# Run directly without installing
-cargo run -- 8080
-
-# Run with verbose flag
-cargo run -- 8080 --verbose
 ```

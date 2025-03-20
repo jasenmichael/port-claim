@@ -3,22 +3,33 @@ name: Build and Upload Binaries
 on:
   release:
     types: [created]
-  # push:
-  #   tags:
-  #     - 'v*'  # Run when any tag starting with 'v' is pushed
-  # push:
-  #   branches: [main]
-  workflow_dispatch:
 
 jobs:
-  ci:
-    uses: ./.github/workflows/ci.yml
+  set-version:
+    name: Set Version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Update Cargo.toml version
+        run: |
+          VERSION=$(grep '"version":' package.json | sed -E 's/.*"version": "([^"]+)".*/\1/')
+          sed -i "s/^version = \".*\"/version = \"$VERSION\"/" Cargo.toml
+      
+      # Upload just the Cargo.toml file as an artifact
+      - name: Upload Cargo.toml
+        uses: actions/upload-artifact@v4
+        with:
+          name: cargo-toml
+          path: Cargo.toml
 
   build-and-upload:
     name: Build for ${{ matrix.os }} / ${{ matrix.target }}
-    needs: ci
+    # Updated dependencies to only need prepare-version
+    needs: [set-version]
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         include:
           # Linux builds (64-bit) - using musl for static linking
@@ -50,6 +61,13 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+      
+      # Download the updated Cargo.toml
+      - name: Download Cargo.toml
+        uses: actions/download-artifact@v4
+        with:
+          name: cargo-toml
+          path: .
 
       - name: Setup Rust
         uses: actions-rs/toolchain@v1
@@ -70,12 +88,50 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y gcc-aarch64-linux-gnu
 
+      # Check formatting (platform independent)
+      - name: Check formatting
+        uses: actions-rs/cargo@v1
+        with:
+          command: fmt
+          args: --all -- --check
+
+      # Lint with clippy
+      - name: Lint with clippy
+        uses: actions-rs/cargo@v1
+        with:
+          use-cross: ${{ contains(matrix.target, 'aarch64-unknown-linux') || contains(matrix.target, 'i686-unknown-linux') }}
+          command: clippy
+          args: -- -D warnings
+        env:
+          TARGET: ${{ matrix.target }}
+
+      # Build the binary first
       - name: Build binary
         uses: actions-rs/cargo@v1
         with:
-          use-cross: ${{ contains(matrix.target, 'aarch64-unknown-linux') }}
+          use-cross: ${{ contains(matrix.target, 'aarch64-unknown-linux') || contains(matrix.target, 'i686-unknown-linux') }}
+          command: build
+          args: --target ${{ matrix.target }}
+        env:
+          TARGET: ${{ matrix.target }}
+          
+      # Run tests using the simple path in the test file
+      - name: Run tests
+        uses: actions-rs/cargo@v1
+        with:
+          command: test
+        env:
+          TARGET: ${{ matrix.target }}
+
+      # Now build release version
+      - name: Build release binary
+        uses: actions-rs/cargo@v1
+        with:
+          use-cross: ${{ contains(matrix.target, 'aarch64-unknown-linux') || contains(matrix.target, 'i686-unknown-linux') }}
           command: build
           args: --release --target ${{ matrix.target }}
+        env:
+          TARGET: ${{ matrix.target }}
 
       - name: Prepare archive
         shell: bash
@@ -104,23 +160,16 @@ jobs:
           tar czf ../${{ matrix.asset_name }} port-claim
           cd ..
 
-      # Use different upload steps depending on trigger type
-      - name: Check if triggered by release
-        id: check_release
-        run: echo "is_release=${{ github.event_name == 'release' }}" >> $GITHUB_OUTPUT
-
-      # Upload to the current release if triggered by a release event
+      # Upload to the current release
       - name: Upload binary to current release
-        if: steps.check_release.outputs.is_release == 'true'
         uses: softprops/action-gh-release@v1
         with:
           files: ${{ matrix.asset_name }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
-      # Get latest release and upload to it if triggered by push or manual dispatch
+      # Get latest release and upload to it
       - name: Get latest release
-        if: steps.check_release.outputs.is_release != 'true'
         id: latest_release
         uses: cardinalby/git-get-release-action@v1
         env:
@@ -129,7 +178,6 @@ jobs:
           latest: true
           
       - name: Upload binary to latest release
-        if: steps.check_release.outputs.is_release != 'true'
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ steps.latest_release.outputs.tag_name }}
