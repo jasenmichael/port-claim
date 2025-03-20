@@ -23,7 +23,5 @@ git tag "v$PACKAGE_VERSION"
 git push --follow-tags
 
 # Publish to registries
-# cargo publish
+cargo publish
 npm publish
-
-# cargo test --verbose && changelogen --release && ./sync_version.sh && cargo publish && npm publish && git push --follow-tags
