@@ -26,5 +26,5 @@ git tag "v$PACKAGE_VERSION"
 git push --follow-tags
 
 # Publish to registries
-cargo publish
 npm publish
+cargo publish

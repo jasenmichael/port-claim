@@ -19,6 +19,44 @@
 ### 🏡 Chore
 
 - Remove TypeScript implementation ([293a441](https://github.com/jasenmichael/port-claim/commit/293a441))
+- **release:** V2.0.0 ([b35e8ee](https://github.com/jasenmichael/port-claim/commit/b35e8ee))
+
+### ✅ Tests
+
+- Add Rust test suite ([8bd385a](https://github.com/jasenmichael/port-claim/commit/8bd385a))
+
+### 🤖 CI
+
+- Add GitHub Actions workflows ([160d438](https://github.com/jasenmichael/port-claim/commit/160d438))
+- Add local release script ([843380a](https://github.com/jasenmichael/port-claim/commit/843380a))
+- Update relase ([d640fa6](https://github.com/jasenmichael/port-claim/commit/d640fa6))
+
+#### ⚠️ Breaking Changes
+
+- ⚠️  Rewrite in Rust ([120c28c](https://github.com/jasenmichael/port-claim/commit/120c28c))
+
+### ❤️ Contributors
+
+- Jasenmichael <jasen@jasenmichael.com>
+
+## v2.0.0
+
+[compare changes](https://github.com/jasenmichael/port-claim/compare/v1.7.30...v2.0.0)
+
+### 🚀 Enhancements
+
+- Update package configuration for binary distribution ([975cf64](https://github.com/jasenmichael/port-claim/commit/975cf64))
+- Add Rust implementation ([a8cbc3c](https://github.com/jasenmichael/port-claim/commit/a8cbc3c))
+- Add binary-install JavaScript wrapper ([59d6574](https://github.com/jasenmichael/port-claim/commit/59d6574))
+- ⚠️  Rewrite in Rust ([120c28c](https://github.com/jasenmichael/port-claim/commit/120c28c))
+
+### 📖 Documentation
+
+- Update project documentation for Rust implementation ([56b0716](https://github.com/jasenmichael/port-claim/commit/56b0716))
+
+### 🏡 Chore
+
+- Remove TypeScript implementation ([293a441](https://github.com/jasenmichael/port-claim/commit/293a441))
 
 ### ✅ Tests
 
