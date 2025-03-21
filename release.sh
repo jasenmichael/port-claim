@@ -2,7 +2,6 @@
 set -e
 
 # Run tests
-cargo test --verbose
 
 # Use changelogen to prepare release files without committing
 npx changelogen --release --no-commit --no-tag
@@ -10,7 +9,11 @@ npx changelogen --release --no-commit --no-tag
 # Sync versions
 PACKAGE_VERSION=$(grep -oP '"version": "\K[^"]+' package.json)
 sed -i "s/^version = \".*\"/version = \"$PACKAGE_VERSION\"/" Cargo.toml
+
+cargo test --verbose
 cargo check --quiet
+cargo fmt --all -- --check
+cargo clippy -- -D warnings
 
 # Stage all files
 git add package.json CHANGELOG.md Cargo.toml Cargo.lock
