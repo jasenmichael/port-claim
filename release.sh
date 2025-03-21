@@ -1,8 +1,6 @@
 #!/bin/bash
 set -e
 
-# Run tests
-
 # Use changelogen to prepare release files without committing
 npx changelogen --release --no-commit --no-tag
 
@@ -10,6 +8,7 @@ npx changelogen --release --no-commit --no-tag
 PACKAGE_VERSION=$(grep -oP '"version": "\K[^"]+' package.json)
 sed -i "s/^version = \".*\"/version = \"$PACKAGE_VERSION\"/" Cargo.toml
 
+# Run tests
 cargo test --verbose
 cargo check --quiet
 cargo fmt --all -- --check
